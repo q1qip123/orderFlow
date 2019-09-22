@@ -1,0 +1,7 @@
+struct order{
+  long customerID;
+  string dish;
+  long amount;
+  
+};
+#pragma keylist order customerID
