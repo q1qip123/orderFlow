@@ -1,7 +1,10 @@
-struct order{
-  long customerID;
-  string dish;
-  long amount;
-  
-};
-#pragma keylist order customerID
+module OrderData
+{	
+	struct order{
+	  long customerID;
+	  string dish;
+	  long amount;
+	  
+	};
+	#pragma keylist order customerID
+}
