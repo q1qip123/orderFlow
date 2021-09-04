@@ -5,23 +5,25 @@
 
   #include "ccpp_dds_dcps.h"
   #include "CheckStatus.h"
+  #include "cstring"
   using namespace DDS;
 
   class DDSEntityManager
   {
 
       /* Generic DDS entities */
-      DomainParticipantFactory_var dpf;
+      DomainParticipantFactory_var factory;
       DomainParticipant_var participant;
-      Topic_var topic;
+      Topic_var odr_in;
+      Topic_var odr_out;
       Publisher_var publisher;
       Subscriber_var subscriber;
       DataWriter_var writer;
       DataReader_var reader;
 
       /* QosPolicy holders */
-      TopicQos reliable_topic_qos;
-      TopicQos setting_topic_qos;
+      TopicQos tQos1;
+      TopicQos tQos2;
       PublisherQos pub_qos;
       SubscriberQos sub_qos;
 
@@ -35,21 +37,22 @@
       void createParticipant(const char *partitiontName);
       void deleteParticipant();
       void registerType(TypeSupport *ts);
-      void createTopic(char *topicName);
+      void createTopic(char *odr_in_name, char *odr_out_name);
       void deleteTopic();
       void createPublisher();
       void deletePublisher();
-      void createWriter();
+      void createWriter(Topic_ptr topic);
       void deleteWriter(DDS::DataWriter_ptr dataWriter);
       void createSubscriber();
       void deleteSubscriber();
-      void createReader();
+      void createReader(Topic_ptr topic);
       void deleteReader(DDS::DataReader_ptr dataReader);
       DataReader_ptr getReader();
       DataWriter_ptr getWriter();
       Publisher_ptr getPublisher();
       Subscriber_ptr getSubscriber();
-      Topic_ptr getTopic();
+      Topic_ptr getOdrIn();
+      Topic_ptr getOdrOut();
       DomainParticipant_ptr getParticipant();
       ~DDSEntityManager();
   };
