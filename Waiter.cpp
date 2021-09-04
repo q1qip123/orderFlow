@@ -8,8 +8,8 @@
 #include <ccpp_OrderData.h>
 #include <DDSEntityManager.h>
 #include <vortex_os.h>
+#include <semaphore.h>  
 
-#include "example_main.h"
 using namespace DDS;
 using namespace OrderData;
 using namespace std;
@@ -34,6 +34,8 @@ Waiter::Waiter(int id, string name, string partition){
 	entity_manager.createPublisher();
 	entity_manager.createSubscriber();
 
+	sem_init(&waiter_sem, 0, 1); 
+
 }
 
 Waiter::~Waiter(){
@@ -44,6 +46,8 @@ Waiter::~Waiter(){
 }
 
 void Waiter::receiveOrder(int id, string dish, int amount){
+	sem_wait(&waiter_sem);
+
 	Topic_var odr_in = entity_manager.getOdrIn();
 	entity_manager.createWriter(odr_in.in());
 	
@@ -66,6 +70,7 @@ void Waiter::receiveOrder(int id, string dish, int amount){
 	os_nanoSleep(delay_1s);
 
 	entity_manager.deleteWriter(OrderDataWriter.in());
+	sem_post(&waiter_sem);
 }
 
 void Waiter::deliverOrder(){
@@ -93,8 +98,10 @@ void Waiter::deliverOrder(){
 		for (ulong j = 0; j < orderList.length(); j++)
 		{
 			if (infoSeq[j].valid_data){
-				cout << endl << "Deliver " << orderList[j].dish << " to  customer" << orderList[j].customerID << endl;
+				sem_wait(&waiter_sem);
+				cout << endl << _name << " deliver " << orderList[j].dish << " to  customer" << orderList[j].customerID << endl;
 				os_nanoSleep(delay_1s);
+				sem_post(&waiter_sem);
 			}
 		}
 		status = OrderReader->return_loan(orderList, infoSeq);
@@ -149,12 +156,12 @@ int main(int argc, char *argv[])
 
 
 	Waiter waiter1(1, "waiter1", "order");
-	thread mthread(&Waiter::deliverOrder, ref(waiter1));
+	thread mthread1(&Waiter::deliverOrder, ref(waiter1));
 	for (int i = 0; i < order_list.size(); i++){
 		waiter1.receiveOrder(order_list[i].customerID, order_list[i].dish, order_list[i].amount);
-	
+
 	}
-	mthread.join();
+	mthread1.join();
 	return 0;
 
 

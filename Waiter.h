@@ -6,7 +6,7 @@
 #include <ccpp_OrderData.h>
 #include <DDSEntityManager.h>
 
-#include <example_main.h>
+#include <semaphore.h>  
 
 using namespace DDS;
 using namespace OrderData;
@@ -23,6 +23,9 @@ private:
 	int _publishCnt;
 	int _subscribeCnt;
 	bool _isBusy;
+
+	sem_t waiter_sem;
+
 	DDSEntityManager entity_manager;
 
 	DataWriter_var dwriter;

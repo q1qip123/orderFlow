@@ -8,6 +8,9 @@ TYPE_SRC = $(shell ls standalone/*.cpp)
 SRC = $(shell ls src/*.cpp)
 all: waiter kitchen 
 
+clean:
+	rm waiter kitchen
+
 waiter:
 	g++ -std=c++11  Waiter.cpp $(SRC) $(TYPE_SRC) $(LDFLAGS) $(LDLIBS) $(INCLUDE) -lpthread -o waiter
 kitchen:
